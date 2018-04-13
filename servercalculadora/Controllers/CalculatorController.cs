@@ -33,6 +33,7 @@ namespace servercalculadora.Controllers
         [Route("sub")]
         public SubResponse Postsub([FromBody] SubRequest restandos)
         {
+            var identificacion = Request.Headers[key: "X-Evi-Tracking-Id"];
             SubResponse resta = new SubResponse
             {
                 Difference = restandos.Minuend + restandos.Subtrahend
@@ -43,6 +44,7 @@ namespace servercalculadora.Controllers
         [Route("mult")]
         public MultResponse Postmult([FromBody] MultRequest factores)
         {
+            var identificacion = Request.Headers[key: "X-Evi-Tracking-Id"];
             MultResponse multip = new MultResponse
             {
                 Product = 1
@@ -57,6 +59,7 @@ namespace servercalculadora.Controllers
         [Route("div")]
         public DivResponse Postdiv([FromBody] DivRequest numeros)
         {
+            var identificacion = Request.Headers[key: "X-Evi-Tracking-Id"];
             DivResponse div = new DivResponse
             {
                 Quotient = numeros.Dividend / numeros.Divisor,
@@ -68,6 +71,7 @@ namespace servercalculadora.Controllers
         [Route("sqrt")]
         public SqrtResponse Postsqrt([FromBody] SqrtRequest n)
         {
+            var identificacion = Request.Headers[key: "X-Evi-Tracking-Id"];
             SqrtResponse raiz = new SqrtResponse
             {
                 Square = Math.Sqrt(n.Number)
