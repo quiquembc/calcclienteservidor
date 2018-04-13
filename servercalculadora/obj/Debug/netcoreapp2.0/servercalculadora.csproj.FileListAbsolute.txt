@@ -1,0 +1,11 @@
+C:\Users\emartinez\source\repos\calculadora\servercalculadora\bin\Debug\netcoreapp2.0\servercalculadora.deps.json
+C:\Users\emartinez\source\repos\calculadora\servercalculadora\bin\Debug\netcoreapp2.0\servercalculadora.runtimeconfig.json
+C:\Users\emartinez\source\repos\calculadora\servercalculadora\bin\Debug\netcoreapp2.0\servercalculadora.runtimeconfig.dev.json
+C:\Users\emartinez\source\repos\calculadora\servercalculadora\bin\Debug\netcoreapp2.0\servercalculadora.dll
+C:\Users\emartinez\source\repos\calculadora\servercalculadora\bin\Debug\netcoreapp2.0\servercalculadora.pdb
+C:\Users\emartinez\source\repos\calculadora\servercalculadora\obj\Debug\netcoreapp2.0\servercalculadora.csprojResolveAssemblyReference.cache
+C:\Users\emartinez\source\repos\calculadora\servercalculadora\obj\Debug\netcoreapp2.0\servercalculadora.csproj.CoreCompileInputs.cache
+C:\Users\emartinez\source\repos\calculadora\servercalculadora\obj\Debug\netcoreapp2.0\servercalculadora.AssemblyInfoInputs.cache
+C:\Users\emartinez\source\repos\calculadora\servercalculadora\obj\Debug\netcoreapp2.0\servercalculadora.AssemblyInfo.cs
+C:\Users\emartinez\source\repos\calculadora\servercalculadora\obj\Debug\netcoreapp2.0\servercalculadora.dll
+C:\Users\emartinez\source\repos\calculadora\servercalculadora\obj\Debug\netcoreapp2.0\servercalculadora.pdb
