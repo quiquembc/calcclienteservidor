@@ -12,7 +12,7 @@ namespace clientcalculadora
     class Program
     {
         
-        private static string Sumar(string XEviTrackingId)
+        private static string Sumar()
         {
             SumRequest req = new SumRequest();
             SumResponse rep;
@@ -59,6 +59,7 @@ namespace clientcalculadora
             var hrequest = (HttpWebRequest)WebRequest.Create("http://localhost:52890/api/Calculator/mult");
             hrequest.ContentType = "application/json";
             hrequest.Method = "POST";
+            hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
             using (var sw = new StreamWriter(hrequest.GetRequestStream()))
             {
                 string json = JsonConvert.SerializeObject(req);
@@ -85,6 +86,7 @@ namespace clientcalculadora
             var hrequest = (HttpWebRequest)WebRequest.Create("http://localhost:52890/api/Calculator/sub");
             hrequest.ContentType = "application/json";
             hrequest.Method = "POST";
+            hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
             using (var sw = new StreamWriter(hrequest.GetRequestStream()))
             {
                 string json = JsonConvert.SerializeObject(peti);
@@ -111,6 +113,7 @@ namespace clientcalculadora
             var hrequest = (HttpWebRequest)WebRequest.Create("http://localhost:52890/api/Calculator/div");
             hrequest.ContentType = "application/json";
             hrequest.Method = "POST";
+            hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
             using (var sw = new StreamWriter(hrequest.GetRequestStream()))
             {
                 string json = JsonConvert.SerializeObject(peti);
@@ -136,6 +139,7 @@ namespace clientcalculadora
             var hrequest = (HttpWebRequest)WebRequest.Create("http://localhost:52890/api/Calculator/sqrt");
             hrequest.ContentType = "application/json";
             hrequest.Method = "POST";
+            hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
             using (var sw = new StreamWriter(hrequest.GetRequestStream()))
             {
                 string json = JsonConvert.SerializeObject(peti);
@@ -152,13 +156,13 @@ namespace clientcalculadora
             }
             return "La raíz cuadrada del número dado es: "+resp.Square;
         }
-        
+        public static string XEviTrackingId;
         static void Main(string[] args)
         {
 
             Console.WriteLine("Bienvenido al programa calculadora");            
             Console.WriteLine("Introduce una identificación");
-            string XEviTrackingId = Console.ReadLine();            
+            XEviTrackingId = Console.ReadLine();            
             int menu;
             do
             {                
@@ -178,7 +182,7 @@ namespace clientcalculadora
                 {
                     case 1:
                         Console.WriteLine("SUMA");                      
-                        Console.WriteLine("El total de la suma es "+ Sumar(XEviTrackingId));
+                        Console.WriteLine("El total de la suma es "+ Sumar());
                         break;
                     case 2:
                         Console.WriteLine("RESTA");                                                
