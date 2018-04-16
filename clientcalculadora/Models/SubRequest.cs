@@ -4,9 +4,9 @@ using System.Text;
 
 namespace clientcalculadora.Models
 {
-    class SubRequest
-    {
-        public int Minuend { get; set; }
-        public int Subtrahend { get; set; }
-    }
+	class SubRequest
+	{
+		public int Minuend { get; set; }
+		public int Subtrahend { get; set; }
+	}
 }

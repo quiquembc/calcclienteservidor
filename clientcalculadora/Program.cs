@@ -180,6 +180,9 @@ namespace clientcalculadora
                 Console.WriteLine(menu);
                 switch (menu)
                 {
+                    case 0:
+                        Console.WriteLine("Vuelve pronto");                        
+                        break;
                     case 1:
                         Console.WriteLine("SUMA");                      
                         Console.WriteLine("El total de la suma es "+ Sumar());
@@ -207,7 +210,7 @@ namespace clientcalculadora
                         Console.WriteLine("en construccion");                        
                         break;
                     default:
-                        Console.WriteLine("Muy gracioso, introduce una opcion válida");
+                        Console.WriteLine("No, introduce una opcion válida");
                         break;
                 }
                 Console.WriteLine("...");

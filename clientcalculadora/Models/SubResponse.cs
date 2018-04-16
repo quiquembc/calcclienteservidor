@@ -4,8 +4,8 @@ using System.Text;
 
 namespace clientcalculadora.Models
 {
-    class SubResponse
-    {
-        public int Difference { get; set; }
-    }
+	class SubResponse
+	{
+		public int Difference { get; set; }
+	}
 }

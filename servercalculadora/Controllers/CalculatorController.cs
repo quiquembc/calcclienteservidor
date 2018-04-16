@@ -10,7 +10,13 @@ namespace servercalculadora.Controllers
     [Produces("application/json")]
     [Route("api/Calculator")]
     public class CalculatorController : Controller
-    {                
+    {
+        [HttpGet]
+        [Route("Index")]
+        public String Index()
+        {
+            return "Calculator server is on...";
+        }
         // POST: api/Calculator
         [HttpPost]
         [Route("add")]
