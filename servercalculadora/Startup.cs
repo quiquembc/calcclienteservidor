@@ -39,7 +39,7 @@ namespace servercalculadora
 				routes.MapRoute(
 					name: "default",
 					template: "api/Calculator/Index");
-			});
+			});						
 		}
 	}
 }
