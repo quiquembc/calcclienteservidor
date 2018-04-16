@@ -11,7 +11,6 @@ namespace clientcalculadora
 {
 	class Program
 	{
-
 		private static string Sumar()
 		{
 			SumRequest req = new SumRequest();

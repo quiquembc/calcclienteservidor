@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace servercalculadora.Models
 {
-    public class SubRequest
-    {
-        public int Minuend { get; set; }
-        public int Subtrahend { get; set; }
-    }
+	public class SubRequest
+	{
+		public int Minuend { get; set; }
+		public int Subtrahend { get; set; }
+	}
 }

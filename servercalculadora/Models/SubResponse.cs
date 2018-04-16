@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace servercalculadora.Models
 {
-    public class SubResponse
-    {
-        public int Difference { get; set; }
-    }
+	public class SubResponse
+	{
+		public int Difference { get; set; }
+	}
 }
