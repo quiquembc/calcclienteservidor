@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace clientcalculadora.Models
 {
-	class SumResponse
+	public class SumResponse
 	{
 		public int Sum { get; set; }
 	}

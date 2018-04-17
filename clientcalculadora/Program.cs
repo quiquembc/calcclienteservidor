@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 using System.Net;
 using System.IO;
 using clientcalculadora.Models;
+using System.Collections.Generic;
+
 namespace clientcalculadora
 {
 	class Program
@@ -127,7 +129,7 @@ namespace clientcalculadora
 				sr.Close();
 				resp = JsonConvert.DeserializeObject<DivResponse>(response1);
 			}
-			return "El cociente de la operacion es: " + resp.Quotient + " y el resto es: " + resp.Remainder;
+			return String.Format("El cociente de la operacion es: {0} y el resto es: {1}", resp.Quotient, resp.Remainder);
 		}
 		private static string Raiz()
 		{
@@ -153,15 +155,33 @@ namespace clientcalculadora
 				sr.Close();
 				resp = JsonConvert.DeserializeObject<SqrtResponse>(response1);
 			}
-			return "La raíz cuadrada del número dado es: " + resp.Square;
+			return String.Format("La raíz cuadrada del número dado es: {0}", resp.Square); 
+		}
+		private static void RequestJournal()
+		{
+			List<StandartOperation> response;
+			var hrequest = (HttpWebRequest)WebRequest.Create("http://localhost:52890/api/Calculator/Journal");
+			hrequest.ContentType = "application/json";
+			hrequest.Method = "GET";
+			hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);			
+			var hrespond = (HttpWebResponse)hrequest.GetResponse();
+			using (var sr = new StreamReader(hrespond.GetResponseStream()))
+			{
+				var response1 = sr.ReadToEnd();
+				sr.Close();
+				response = JsonConvert.DeserializeObject<List<StandartOperation>>(response1);
+			}
+			foreach (var operation in response)
+			{
+				Console.WriteLine(operation.Calculation());
+			}
 		}
 		public static string XEviTrackingId;
 		static void Main(string[] args)
 		{
-
 			Console.WriteLine("Bienvenido al programa calculadora");
 			Console.WriteLine("Introduce una identificación");
-			XEviTrackingId = Console.ReadLine();
+			XEviTrackingId = Console.ReadLine().Trim();
 			int menu;
 			do
 			{
@@ -171,10 +191,11 @@ namespace clientcalculadora
 				Console.WriteLine("3 - Multiplicar");
 				Console.WriteLine("4 - Dividir");
 				Console.WriteLine("5 - Hacer la raíz cuadrada de un número");
-				Console.WriteLine("6 - Consultar operaciones previas");
+				Console.WriteLine("6 - Consultar operaciones previas (journal)");
 				Console.WriteLine("7 - Consultar logs de errores");
+				Console.WriteLine("8 - Cambiar de usuario");
 				Console.WriteLine("0 - Salir");
-				String entrada = Console.ReadLine();
+				String entrada = Console.ReadLine().Trim();
 				menu = Int32.Parse(entrada);
 				Console.WriteLine(menu);
 				switch (menu)
@@ -184,15 +205,15 @@ namespace clientcalculadora
 						break;
 					case 1:
 						Console.WriteLine("SUMA");
-						Console.WriteLine("El total de la suma es " + Sumar());
+						Console.WriteLine(String.Format("El total de la suma es {0}",Sumar()));
 						break;
 					case 2:
 						Console.WriteLine("RESTA");
-						Console.WriteLine("El resultado es " + Restar());
+						Console.WriteLine(String.Format("El resultado es {0}", Restar()));
 						break;
 					case 3:
 						Console.WriteLine("MULTIPLICACIÓN");
-						Console.WriteLine("El resultado es " + Multiplicar());
+						Console.WriteLine(String.Format("El resultado es {0}", Multiplicar()));
 						break;
 					case 4:
 						Console.WriteLine("DIVISIÓN");
@@ -203,13 +224,18 @@ namespace clientcalculadora
 						Console.WriteLine(Raiz());
 						break;
 					case 6:
-						Console.WriteLine("en construccion");
+						Console.WriteLine(String.Format("JOURNAL OF USE FOR USER: {0}",XEviTrackingId));
+						RequestJournal();
 						break;
 					case 7:
 						Console.WriteLine("en construccion");
 						break;
+					case 8:
+						Console.WriteLine("Introduce una nueva identificación");
+						XEviTrackingId = Console.ReadLine().Trim();
+						break;
 					default:
-						Console.WriteLine("No, introduce una opcion válida");
+						Console.WriteLine("No, introduce una opción válida");
 						break;
 				}
 				Console.WriteLine("...");

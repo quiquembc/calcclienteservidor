@@ -4,7 +4,7 @@ using System.Text;
 
 namespace clientcalculadora.Models
 {
-	class SubResponse
+	public class SubResponse
 	{
 		public int Difference { get; set; }
 	}

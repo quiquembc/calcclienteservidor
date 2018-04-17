@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace servercalculadora.Models
+namespace clientcalculadora.Models
 {
-	public class User
+	public class StandartOperation : IOperation
 	{
-		public User(string plogin)
+		public string info { get; set; }
+		public string Calculation()
 		{
-			this.Login = plogin;
-			this.Operations = new List<IOperation>{ };
+			return info;
 		}
-		public string Login { get; set; }
-		public List<IOperation> Operations { get; set; }
-	}
-	public class UsersBook
-	{
-		public List<User> Users = new List<User> { };
 	}
 	public class AddOperation : IOperation
 	{
@@ -25,15 +18,15 @@ namespace servercalculadora.Models
 		public AddOperation(SumRequest petition, SumResponse devolution)
 		{
 			string aux = "";
-			for (int i = 0; i < petition.Addends.Length ; i++)
+			for (int i = 0; i < petition.Addends.Length; i++)
 			{
-				if (i<(petition.Addends.Length-1))
+				if (i < (petition.Addends.Length - 1))
 				{
-					aux = String.Format("{0}{1}+", aux, petition.Addends[i]);
+					aux = String.Format(" {0}{1} +", aux, petition.Addends[i]);
 				}
 				else
 				{
-					aux = String.Format("{0}{1}=", aux, petition.Addends[i]);
+					aux = String.Format("{0}{1} = ", aux, petition.Addends[i]);
 				}
 			}
 			info = String.Format("{0}{1}", aux, devolution.Sum);
@@ -49,13 +42,12 @@ namespace servercalculadora.Models
 
 		public SubtractOperation(SubRequest request, SubResponse response)
 		{
-			info = String.Format("{0}{1}={2}",request.Minuend,request.Subtrahend,response.Difference);
+			info = String.Format("{0}{1} = {2}", request.Minuend, request.Subtrahend, response.Difference);
 		}
 		public string Calculation()
 		{
 			return info;
 		}
-
 	}
 	public class MultOperation : IOperation
 	{
@@ -67,11 +59,11 @@ namespace servercalculadora.Models
 			{
 				if (i < (petition.Factors.Length - 1))
 				{
-					aux = String.Format("{0}{1}*", aux, petition.Factors[i]);
+					aux = String.Format(" {0}{1} *", aux, petition.Factors[i]);
 				}
 				else
 				{
-					aux = String.Format("{0}{1}=", aux, petition.Factors[i]);
+					aux = String.Format("{0}{1} = ", aux, petition.Factors[i]);
 				}
 			}
 			info = String.Format("{0}{1}", aux, devolution.Product);
@@ -87,7 +79,7 @@ namespace servercalculadora.Models
 
 		public DivisionOperation(DivRequest request, DivResponse response)
 		{
-			info = String.Format("{0}/{1}=>Quotient={2},Remainder={3} ", request.Dividend, request.Divisor, response.Quotient, response.Remainder);
+			info = String.Format("{0}{1} = {2} ,  Remainder = {3} ", request.Dividend, request.Divisor, response.Quotient, response.Remainder);
 		}
 		public string Calculation()
 		{
