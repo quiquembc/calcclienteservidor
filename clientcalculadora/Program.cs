@@ -13,10 +13,32 @@ namespace clientcalculadora
 {
 	class Program
 	{
+		private static string LaunchRequestAndReceiveResponse(Object request,string operationcall)
+		{
+			var hrequest = (HttpWebRequest)WebRequest.Create($"http://localhost:52890/api/Calculator/{operationcall}");
+			hrequest.ContentType = "application/json";
+			hrequest.Method = "POST";
+			if (operationcall!="journal") hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
+			hrequest.Timeout = 5000;
+			using (var sw = new StreamWriter(hrequest.GetRequestStream()))
+			{
+				string json = JsonConvert.SerializeObject(request);
+				sw.Write(json);
+				sw.Flush();
+				sw.Close();
+			}
+			var hrespond = (HttpWebResponse)hrequest.GetResponse();
+			string response1;
+			using (var sr = new StreamReader(hrespond.GetResponseStream()))
+			{
+				response1 = sr.ReadToEnd();
+				sr.Close();
+			}
+			return response1;
+		}
 		private static string Sumar()
 		{
 			SumRequest req = new SumRequest();
-			SumResponse rep;
 			Console.WriteLine("Introduce cuantos numeros deseas sumar");
 			int cuantos = Int32.Parse(Console.ReadLine());
 			req.Addends = new int[cuantos];
@@ -24,31 +46,13 @@ namespace clientcalculadora
 			for (int i = 0; i < cuantos; i++)
 			{
 				req.Addends[i] = Int32.Parse(Console.ReadLine());
-			}
-			var hrequest = (HttpWebRequest)WebRequest.Create("http://localhost:52890/api/Calculator/add");
-			hrequest.ContentType = "application/json";
-			hrequest.Method = "POST";
-			hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
-			using (var sw = new StreamWriter(hrequest.GetRequestStream()))
-			{
-				string json = JsonConvert.SerializeObject(req);
-				sw.Write(json);
-				sw.Flush();
-				sw.Close();
-			}
-			var hrespond = (HttpWebResponse)hrequest.GetResponse();
-			using (var sr = new StreamReader(hrespond.GetResponseStream()))
-			{
-				var response1 = sr.ReadToEnd();
-				sr.Close();
-				rep = JsonConvert.DeserializeObject<SumResponse>(response1);
-			}
+			}			
+			var rep = JsonConvert.DeserializeObject<SumResponse>(LaunchRequestAndReceiveResponse(req, "add"));
 			return rep.Sum.ToString();
 		}
 		private static string Multiplicar()
 		{
 			MultRequest req = new MultRequest();
-			MultResponse rep;
 			Console.WriteLine("Introduce cuantos numeros deseas multiplicar");
 			int cuantos = Int32.Parse(Console.ReadLine());
 			req.Factors = new int[cuantos];
@@ -56,124 +60,46 @@ namespace clientcalculadora
 			for (int i = 0; i < cuantos; i++)
 			{
 				req.Factors[i] = Int32.Parse(Console.ReadLine());
-			}
-			var hrequest = (HttpWebRequest)WebRequest.Create("http://localhost:52890/api/Calculator/mult");
-			hrequest.ContentType = "application/json";
-			hrequest.Method = "POST";
-			hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
-			using (var sw = new StreamWriter(hrequest.GetRequestStream()))
-			{
-				string json = JsonConvert.SerializeObject(req);
-				sw.Write(json);
-				sw.Flush();
-				sw.Close();
-			}
-			var hrespond = (HttpWebResponse)hrequest.GetResponse();
-			using (var sr = new StreamReader(hrespond.GetResponseStream()))
-			{
-				var response1 = sr.ReadToEnd();
-				sr.Close();
-				rep = JsonConvert.DeserializeObject<MultResponse>(response1);
-			}
+			}			
+			var rep = JsonConvert.DeserializeObject<MultResponse>(LaunchRequestAndReceiveResponse(req, "mult"));
 			return rep.Product.ToString();
 		}
 		private static string Restar()
 		{
-			SubRequest peti = new SubRequest();
-			SubResponse resp;
+			SubRequest petition = new SubRequest();
 			Console.WriteLine("Introduce minuendo y sustraendo");
-			peti.Minuend = Int32.Parse(Console.ReadLine());
-			peti.Subtrahend = Int32.Parse("-" + Console.ReadLine());
-			var hrequest = (HttpWebRequest)WebRequest.Create("http://localhost:52890/api/Calculator/sub");
-			hrequest.ContentType = "application/json";
-			hrequest.Method = "POST";
-			hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
-			using (var sw = new StreamWriter(hrequest.GetRequestStream()))
-			{
-				string json = JsonConvert.SerializeObject(peti);
-				sw.Write(json);
-				sw.Flush();
-				sw.Close();
-			}
-			var hrespond = (HttpWebResponse)hrequest.GetResponse();
-			using (var sr = new StreamReader(hrespond.GetResponseStream()))
-			{
-				var response1 = sr.ReadToEnd();
-				sr.Close();
-				resp = JsonConvert.DeserializeObject<SubResponse>(response1);
-			}
-			return resp.Difference.ToString();
+			petition.Minuend = Int32.Parse(Console.ReadLine());
+			petition.Subtrahend = Int32.Parse($"-{Console.ReadLine()}");
+			var response = JsonConvert.DeserializeObject<SubResponse>(LaunchRequestAndReceiveResponse(petition, "sub"));
+			return response.Difference.ToString();
 		}
 		private static string Dividir()
 		{
-			DivRequest peti = new DivRequest();
-			DivResponse resp;
+			DivRequest petition = new DivRequest();
 			Console.WriteLine("Introduce dividendo y divisor");
-			peti.Dividend = Int32.Parse(Console.ReadLine());
-			peti.Divisor = Int32.Parse(Console.ReadLine());
-			var hrequest = (HttpWebRequest)WebRequest.Create("http://localhost:52890/api/Calculator/div");
-			hrequest.ContentType = "application/json";
-			hrequest.Method = "POST";
-			hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
-			using (var sw = new StreamWriter(hrequest.GetRequestStream()))
-			{
-				string json = JsonConvert.SerializeObject(peti);
-				sw.Write(json);
-				sw.Flush();
-				sw.Close();
-			}
-			var hrespond = (HttpWebResponse)hrequest.GetResponse();
-			using (var sr = new StreamReader(hrespond.GetResponseStream()))
-			{
-				var response1 = sr.ReadToEnd();
-				sr.Close();
-				resp = JsonConvert.DeserializeObject<DivResponse>(response1);
-			}
-			return String.Format("El cociente de la operacion es: {0} y el resto es: {1}", resp.Quotient, resp.Remainder);
+			petition.Dividend = Int32.Parse(Console.ReadLine());
+			petition.Divisor = Int32.Parse(Console.ReadLine());
+			var response = JsonConvert.DeserializeObject<DivResponse>(LaunchRequestAndReceiveResponse(petition, "div"));
+			return String.Format("El cociente de la operacion es: {0} y el resto es: {1}", response.Quotient, response.Remainder);
 		}
 		private static string Raiz()
 		{
-			SqrtRequest peti = new SqrtRequest();
-			SqrtResponse resp;
+			SqrtRequest petition = new SqrtRequest();
 			Console.WriteLine("Introduce el número, cuya raíz cuadrada quieras saber");
-			peti.Number = Int32.Parse(Console.ReadLine());
-			var hrequest = (HttpWebRequest)WebRequest.Create("http://localhost:52890/api/Calculator/sqrt");
-			hrequest.ContentType = "application/json";
-			hrequest.Method = "POST";
-			hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
-			using (var sw = new StreamWriter(hrequest.GetRequestStream()))
-			{
-				string json = JsonConvert.SerializeObject(peti);
-				sw.Write(json);
-				sw.Flush();
-				sw.Close();
-			}
-			var hrespond = (HttpWebResponse)hrequest.GetResponse();
-			using (var sr = new StreamReader(hrespond.GetResponseStream()))
-			{
-				var response1 = sr.ReadToEnd();
-				sr.Close();
-				resp = JsonConvert.DeserializeObject<SqrtResponse>(response1);
-			}
-			return String.Format("La raíz cuadrada del número dado es: {0}", resp.Square); 
+			petition.Number = Int32.Parse(Console.ReadLine());
+			var response = JsonConvert.DeserializeObject<SqrtResponse>(LaunchRequestAndReceiveResponse(petition, "sqrt"));
+			return String.Format("La raíz cuadrada del número dado es: {0}", response.Square); 
 		}
 		private static void RequestJournal()
 		{
-			List<StandartOperation> response;
-			var hrequest = (HttpWebRequest)WebRequest.Create("http://localhost:52890/api/Calculator/Journal");
-			hrequest.ContentType = "application/json";
-			hrequest.Method = "GET";
-			hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);			
-			var hrespond = (HttpWebResponse)hrequest.GetResponse();
-			using (var sr = new StreamReader(hrespond.GetResponseStream()))
+			var request = new JournalRequest
 			{
-				var response1 = sr.ReadToEnd();
-				sr.Close();
-				response = JsonConvert.DeserializeObject<List<StandartOperation>>(response1);
-			}
-			foreach (var operation in response)
+				Id = XEviTrackingId
+			};
+			var response = JsonConvert.DeserializeObject<JournalResponse>(LaunchRequestAndReceiveResponse(request,"journal"));
+			foreach (var operation in response.Operations)
 			{
-				Console.WriteLine(operation.Calculation());
+				Console.WriteLine(operation.Info());
 			}
 		}
 		public static string XEviTrackingId;

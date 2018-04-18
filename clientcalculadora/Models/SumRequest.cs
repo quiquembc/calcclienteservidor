@@ -8,5 +8,4 @@ namespace clientcalculadora.Models
 	{
 		public int[] Addends { get; set; }
 	}
-
 }

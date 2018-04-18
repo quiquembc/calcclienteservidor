@@ -19,20 +19,23 @@ namespace servercalculadora.Controllers
 		{
 			return "Calculator server is listening...";
 		}
-		[HttpGet]
+		[HttpPost]
 		[Route("Journal")]
-		public List<IOperation> ReturnJournal()
+		public JournalResponse ReturnJournal([FromBody] JournalRequest RequestedUser)
 		{
-			string identification = Request.Headers[key: "X-Evi-Tracking-Id"];
-			User currentUser = UsersHandler.KnownOrNot(identification);
-			return currentUser.Operations;
+			User currentUser = UsersHandler.KnownOrNot(RequestedUser.Id);
+			var Journal = new JournalResponse
+			{
+				Operations = currentUser.Operations
+			};
+			return Journal;
 		}
 		// POST: api/Calculator
 		[HttpPost]
 		[Route("add")]
 		public SumResponse Postadd([FromBody] SumRequest sumandos)
 		{
-			string identification = Request.Headers[key: "X-Evi-Tracking-Id"];
+			var identification = Request.Headers[key: "X-Evi-Tracking-Id"];
 			User currentUser=UsersHandler.KnownOrNot(identification);
 			SumResponse sum = new SumResponse
 			{
@@ -41,7 +44,7 @@ namespace servercalculadora.Controllers
 			foreach (int num in sumandos.Addends)
 			{
 				sum.Sum = sum.Sum + num;
-			}			
+			}
 			currentUser.Operations.Add(new AddOperation(sumandos, sum));
 			return sum;
 		}

@@ -15,13 +15,23 @@ namespace servercalculadora.Models
 		public string Login { get; set; }
 		public List<IOperation> Operations { get; set; }
 	}
+	public class JournalResponse
+	{
+		public List<IOperation> Operations { get; set; }
+	}
+	public class JournalRequest
+	{
+		public string Id { get; set; }
+	}
 	public class UsersBook
 	{
 		public List<User> Users = new List<User> { };
 	}
 	public class AddOperation : IOperation
 	{
-		public string info;
+		public string Calculation;
+		public string Date;
+		public string Operation;
 		public AddOperation(SumRequest petition, SumResponse devolution)
 		{
 			string aux = "";
@@ -36,30 +46,33 @@ namespace servercalculadora.Models
 					aux = String.Format("{0}{1}=", aux, petition.Addends[i]);
 				}
 			}
-			info = String.Format("{0}{1}", aux, devolution.Sum);
+			Calculation = String.Format("{0}{1}", aux, devolution.Sum);
+			Date = DateTime.Now.ToString("u");
+			Operation = "Sum";
 		}
-		public string Calculation()
+		public string Info()
 		{
-			return info;
+			return Calculation;
 		}
 	}
 	public class SubtractOperation : IOperation
 	{
-		public string info;
-
+		public string Calculation;
+		public string Date;
+		public string Operation;
 		public SubtractOperation(SubRequest request, SubResponse response)
 		{
-			info = String.Format("{0}{1}={2}",request.Minuend,request.Subtrahend,response.Difference);
+			Calculation = String.Format("{0}{1}={2}",request.Minuend,request.Subtrahend,response.Difference);
+			Date = DateTime.Now.ToString("u");
+			Operation = "Sub";
 		}
-		public string Calculation()
-		{
-			return info;
-		}
-
+		public string Info() => this.Calculation;
 	}
 	public class MultOperation : IOperation
 	{
-		public string info;
+		public string Calculation;
+		public string Date;
+		public string Operation;
 		public MultOperation(MultRequest petition, MultResponse devolution)
 		{
 			string aux = "";
@@ -74,40 +87,50 @@ namespace servercalculadora.Models
 					aux = String.Format("{0}{1}=", aux, petition.Factors[i]);
 				}
 			}
-			info = String.Format("{0}{1}", aux, devolution.Product);
+			Calculation = String.Format("{0}{1}", aux, devolution.Product);
+			Date = DateTime.Now.ToString("u");
+			Operation = "Mult";
 		}
-		public string Calculation()
+		public string Info()
 		{
-			return info;
+			return Calculation;
 		}
 	}
 	public class DivisionOperation : IOperation
 	{
-		public string info;
+		public string Calculation;
+		public string Date;
+		public string Operation;
 
 		public DivisionOperation(DivRequest request, DivResponse response)
 		{
-			info = String.Format("{0}/{1}=>Quotient={2},Remainder={3} ", request.Dividend, request.Divisor, response.Quotient, response.Remainder);
+			Calculation = String.Format("{0}/{1}=>Quotient={2},Remainder={3} ", request.Dividend, request.Divisor, response.Quotient, response.Remainder);
+			Date = DateTime.Now.ToString("u");
+			Operation = "Division";
 		}
-		public string Calculation()
+		public string Info()
 		{
-			return info;
+			return Calculation;
 		}
 	}
 	public class SqrtOperation : IOperation
 	{
-		public string info;
+		public string Calculation;
+		public string Date;
+		public string Operation;
 		public SqrtOperation(SqrtRequest request, SqrtResponse response)
 		{
-			info = String.Format("The square root of {0} is {1} ", request.Number, response.Square);
+			Calculation = String.Format("The square root of {0} is {1} ", request.Number, response.Square);
+			Date = DateTime.Now.ToString("u");
+			Operation = "Root";
 		}
-		public string Calculation()
+		public string Info()
 		{
-			return info;
+			return Calculation;
 		}
 	}
 	public interface IOperation
 	{
-		string Calculation();
+		string Info();
 	}
 }
