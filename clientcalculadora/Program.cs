@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Net;
 using System.IO;
+using System.Threading;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
 using clientcalculadora.Models;
 
-
 namespace clientcalculadora
 {
 	class Program
 	{
-		private static string LaunchRequestAndReceiveResponse(Object request,string operationcall)
+		public static string LaunchRequestAndReceiveResponse(Object request,string operationcall)
 		{
 			var hrequest = (HttpWebRequest)WebRequest.Create($"http://localhost:52890/api/Calculator/{operationcall}");
 			hrequest.ContentType = "application/json";
@@ -35,61 +35,61 @@ namespace clientcalculadora
 			}
 			return response1;
 		}
-		private static string Add()
+		public static string Add()
 		{
 			SumRequest req = new SumRequest();
 			Console.WriteLine("Introduce cuantos numeros deseas sumar");
-			int cuantos = Int32.Parse(Console.ReadLine());
+			int cuantos = ParseStringToInteger(Console.ReadLine());
 			req.Addends = new int[cuantos];
 			Console.WriteLine("Introduce los " + cuantos + " numeros a sumar");
 			for (int i = 0; i < cuantos; i++)
 			{
-				req.Addends[i] = Int32.Parse(Console.ReadLine());
+				req.Addends[i] = ParseStringToInteger(Console.ReadLine());
 			}
 			var rep = JsonConvert.DeserializeObject<SumResponse>(LaunchRequestAndReceiveResponse(req, "add"));
 			return rep.Sum.ToString();
 		}
-		private static string Multiplication()
+		public static string Multiplication()
 		{
 			MultRequest req = new MultRequest();
 			Console.WriteLine("Introduce cuantos numeros deseas multiplicar");
-			int cuantos = Int32.Parse(Console.ReadLine());
+			int cuantos = ParseStringToInteger(Console.ReadLine());
 			req.Factors = new int[cuantos];
 			Console.WriteLine("Introduce los " + cuantos + " numeros a multiplicar");
 			for (int i = 0; i < cuantos; i++)
 			{
-				req.Factors[i] = Int32.Parse(Console.ReadLine());
+				req.Factors[i] = ParseStringToInteger(Console.ReadLine());
 			}
 			var rep = JsonConvert.DeserializeObject<MultResponse>(LaunchRequestAndReceiveResponse(req, "mult"));
 			return rep.Product.ToString();
 		}
-		private static string Subtract()
+		public static string Subtract()
 		{
 			SubRequest petition = new SubRequest();
 			Console.WriteLine("Introduce minuendo y sustraendo");
-			petition.Minuend = Int32.Parse(Console.ReadLine());
-			petition.Subtrahend = Int32.Parse($"-{Console.ReadLine()}");
+			petition.Minuend = ParseStringToInteger(Console.ReadLine());
+			petition.Subtrahend = ParseStringToInteger($"-{Console.ReadLine()}");
 			var response = JsonConvert.DeserializeObject<SubResponse>(LaunchRequestAndReceiveResponse(petition, "sub"));
 			return response.Difference.ToString();
 		}
-		private static string Division()
+		public static string Division()
 		{
 			DivRequest petition = new DivRequest();
 			Console.WriteLine("Introduce dividendo y divisor");
-			petition.Dividend = Int32.Parse(Console.ReadLine());
-			petition.Divisor = Int32.Parse(Console.ReadLine());
+			petition.Dividend = ParseStringToInteger(Console.ReadLine());
+			petition.Divisor = ParseStringToInteger(Console.ReadLine());
 			var response = JsonConvert.DeserializeObject<DivResponse>(LaunchRequestAndReceiveResponse(petition, "div"));
 			return String.Format("El cociente de la operacion es: {0} y el resto es: {1}", response.Quotient, response.Remainder);
 		}
-		private static string Root()
+		public static string Root()
 		{
 			SqrtRequest petition = new SqrtRequest();
 			Console.WriteLine("Introduce el número, cuya raíz cuadrada quieras saber");
-			petition.Number = Int32.Parse(Console.ReadLine());
+			petition.Number = ParseStringToInteger(Console.ReadLine());
 			var response = JsonConvert.DeserializeObject<SqrtResponse>(LaunchRequestAndReceiveResponse(petition, "sqrt"));
 			return String.Format("La raíz cuadrada del número dado es: {0}", response.Square); 
 		}
-		private static void RequestJournal()
+		public static void RequestJournal()
 		{
 			if (XEviTrackingId!="")
 			{
@@ -106,6 +106,19 @@ namespace clientcalculadora
 			else
 			{
 				Console.WriteLine("You cannot request access to a journal as long as you are using incognito mode.");
+			}
+			
+		}
+		public static int ParseStringToInteger(string readFromKeyboard)
+		{
+			try
+			{
+				return Int32.Parse(readFromKeyboard);				
+			}
+			catch (Exception)
+			{
+				Console.WriteLine($"Only numbers allowed, letters and blanks spaces would return -1");
+				return -1;
 			}
 			
 		}
@@ -136,13 +149,14 @@ namespace clientcalculadora
 				Console.WriteLine("7 - Consultar logs de errores");
 				Console.WriteLine("8 - Cambiar de usuario");
 				Console.WriteLine("0 - Salir");
-				String entrada = Console.ReadLine().Trim();
-				menu = Int32.Parse(entrada);
+				var entrada = Console.ReadLine().Trim();
+				menu = ParseStringToInteger(entrada);
 				Console.WriteLine(menu);
 				switch (menu)
 				{
 					case 0:
 						Console.WriteLine("Vuelve pronto");
+						Thread.Sleep(500);
 						break;
 					case 1:
 						Console.WriteLine("SUMA");
