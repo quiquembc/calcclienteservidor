@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using System.Text;
-using Newtonsoft.Json;
 using System.Net;
 using System.IO;
-using clientcalculadora.Models;
 using System.Collections.Generic;
+
+using Newtonsoft.Json;
+
+using clientcalculadora.Models;
+
 
 namespace clientcalculadora
 {
@@ -18,7 +17,7 @@ namespace clientcalculadora
 			var hrequest = (HttpWebRequest)WebRequest.Create($"http://localhost:52890/api/Calculator/{operationcall}");
 			hrequest.ContentType = "application/json";
 			hrequest.Method = "POST";
-			if (operationcall!="journal") hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
+			if ((operationcall!="journal")&&(XEviTrackingId.Length>0)) hrequest.Headers.Add("X-Evi-Tracking-Id:" + XEviTrackingId);
 			hrequest.Timeout = 5000;
 			using (var sw = new StreamWriter(hrequest.GetRequestStream()))
 			{
@@ -36,7 +35,7 @@ namespace clientcalculadora
 			}
 			return response1;
 		}
-		private static string Sumar()
+		private static string Add()
 		{
 			SumRequest req = new SumRequest();
 			Console.WriteLine("Introduce cuantos numeros deseas sumar");
@@ -46,11 +45,11 @@ namespace clientcalculadora
 			for (int i = 0; i < cuantos; i++)
 			{
 				req.Addends[i] = Int32.Parse(Console.ReadLine());
-			}			
+			}
 			var rep = JsonConvert.DeserializeObject<SumResponse>(LaunchRequestAndReceiveResponse(req, "add"));
 			return rep.Sum.ToString();
 		}
-		private static string Multiplicar()
+		private static string Multiplication()
 		{
 			MultRequest req = new MultRequest();
 			Console.WriteLine("Introduce cuantos numeros deseas multiplicar");
@@ -60,11 +59,11 @@ namespace clientcalculadora
 			for (int i = 0; i < cuantos; i++)
 			{
 				req.Factors[i] = Int32.Parse(Console.ReadLine());
-			}			
+			}
 			var rep = JsonConvert.DeserializeObject<MultResponse>(LaunchRequestAndReceiveResponse(req, "mult"));
 			return rep.Product.ToString();
 		}
-		private static string Restar()
+		private static string Subtract()
 		{
 			SubRequest petition = new SubRequest();
 			Console.WriteLine("Introduce minuendo y sustraendo");
@@ -73,7 +72,7 @@ namespace clientcalculadora
 			var response = JsonConvert.DeserializeObject<SubResponse>(LaunchRequestAndReceiveResponse(petition, "sub"));
 			return response.Difference.ToString();
 		}
-		private static string Dividir()
+		private static string Division()
 		{
 			DivRequest petition = new DivRequest();
 			Console.WriteLine("Introduce dividendo y divisor");
@@ -82,7 +81,7 @@ namespace clientcalculadora
 			var response = JsonConvert.DeserializeObject<DivResponse>(LaunchRequestAndReceiveResponse(petition, "div"));
 			return String.Format("El cociente de la operacion es: {0} y el resto es: {1}", response.Quotient, response.Remainder);
 		}
-		private static string Raiz()
+		private static string Root()
 		{
 			SqrtRequest petition = new SqrtRequest();
 			Console.WriteLine("Introduce el número, cuya raíz cuadrada quieras saber");
@@ -92,15 +91,23 @@ namespace clientcalculadora
 		}
 		private static void RequestJournal()
 		{
-			var request = new JournalRequest
+			if (XEviTrackingId!="")
 			{
-				Id = XEviTrackingId
-			};
-			var response = JsonConvert.DeserializeObject<JournalResponse>(LaunchRequestAndReceiveResponse(request,"journal"));
-			foreach (var operation in response.Operations)
-			{
-				Console.WriteLine(operation.Info());
+				var request = new JournalRequest
+				{
+					Id = XEviTrackingId
+				};
+				var response = JsonConvert.DeserializeObject<JournalResponse>(LaunchRequestAndReceiveResponse(request, "journal"));
+				foreach (var operation in response.Operations)
+				{
+					Console.WriteLine(operation.Info());
+				}
 			}
+			else
+			{
+				Console.WriteLine("You cannot request access to a journal as long as you are using incognito mode.");
+			}
+			
 		}
 		public static string XEviTrackingId;
 		static void Main(string[] args)
@@ -108,14 +115,22 @@ namespace clientcalculadora
 			Console.WriteLine("Bienvenido al programa calculadora");
 			Console.WriteLine("Introduce una identificación");
 			XEviTrackingId = Console.ReadLine().Trim();
+			if (XEviTrackingId.Length == 0)
+			{
+				Console.WriteLine("Incognite mode, you will not be tracked");
+			}
+			else
+			{
+				Console.WriteLine($"Welcome home, {XEviTrackingId}");
+			}
 			int menu;
 			do
 			{
 				Console.WriteLine("Introduzca una opción según se desee");
-				Console.WriteLine("1 - Sumar");
-				Console.WriteLine("2 - Restar");
-				Console.WriteLine("3 - Multiplicar");
-				Console.WriteLine("4 - Dividir");
+				Console.WriteLine("1 - Add");
+				Console.WriteLine("2 - Subtract");
+				Console.WriteLine("3 - Multiplication");
+				Console.WriteLine("4 - Division");
 				Console.WriteLine("5 - Hacer la raíz cuadrada de un número");
 				Console.WriteLine("6 - Consultar operaciones previas (journal)");
 				Console.WriteLine("7 - Consultar logs de errores");
@@ -131,23 +146,23 @@ namespace clientcalculadora
 						break;
 					case 1:
 						Console.WriteLine("SUMA");
-						Console.WriteLine(String.Format("El total de la suma es {0}",Sumar()));
+						Console.WriteLine(String.Format("El total de la suma es {0}",Add()));
 						break;
 					case 2:
 						Console.WriteLine("RESTA");
-						Console.WriteLine(String.Format("El resultado es {0}", Restar()));
+						Console.WriteLine(String.Format("El resultado es {0}", Subtract()));
 						break;
 					case 3:
 						Console.WriteLine("MULTIPLICACIÓN");
-						Console.WriteLine(String.Format("El resultado es {0}", Multiplicar()));
+						Console.WriteLine(String.Format("El resultado es {0}", Multiplication()));
 						break;
 					case 4:
 						Console.WriteLine("DIVISIÓN");
-						Console.WriteLine(Dividir());
+						Console.WriteLine(Division());
 						break;
 					case 5:
 						Console.WriteLine("RAÍZ CUADRADA");
-						Console.WriteLine(Raiz());
+						Console.WriteLine(Root());
 						break;
 					case 6:
 						Console.WriteLine(String.Format("JOURNAL OF USE FOR USER: {0}",XEviTrackingId));

@@ -30,13 +30,11 @@ namespace servercalculadora.Controllers
 			};
 			return Journal;
 		}
-		// POST: api/Calculator
 		[HttpPost]
 		[Route("add")]
 		public SumResponse Postadd([FromBody] SumRequest sumandos)
 		{
-			var identification = Request.Headers[key: "X-Evi-Tracking-Id"];
-			User currentUser=UsersHandler.KnownOrNot(identification);
+			
 			SumResponse sum = new SumResponse
 			{
 				Sum = 0
@@ -45,28 +43,34 @@ namespace servercalculadora.Controllers
 			{
 				sum.Sum = sum.Sum + num;
 			}
-			currentUser.Operations.Add(new AddOperation(sumandos, sum));
+			if (Request.Headers["X-Evi-Tracking-Id"].Any())
+			{
+				var identification = Request.Headers["X-Evi-Tracking-Id"];
+				User currentUser = UsersHandler.KnownOrNot(identification);
+				currentUser.Operations.Add(new AddOperation(sumandos, sum));
+			}
 			return sum;
 		}
 		[HttpPost]
 		[Route("sub")]
 		public SubResponse Postsub([FromBody] SubRequest restandos)
 		{
-			var identification = Request.Headers[key: "X-Evi-Tracking-Id"];
-			User currentUser = UsersHandler.KnownOrNot(identification);
 			SubResponse resta = new SubResponse
 			{
 				Difference = restandos.Minuend + restandos.Subtrahend
 			};
-			currentUser.Operations.Add(new SubtractOperation(restandos, resta));
+			if (Request.Headers["X-Evi-Tracking-Id"].Any())
+			{
+				var identification = Request.Headers["X-Evi-Tracking-Id"];
+				User currentUser = UsersHandler.KnownOrNot(identification);
+				currentUser.Operations.Add(new SubtractOperation(restandos, resta));
+			}
 			return resta;
 		}
 		[HttpPost]
 		[Route("mult")]
 		public MultResponse Postmult([FromBody] MultRequest factores)
 		{
-			var identification = Request.Headers[key: "X-Evi-Tracking-Id"];
-			User currentUser = UsersHandler.KnownOrNot(identification);
 			MultResponse multip = new MultResponse
 			{
 				Product = 1
@@ -75,34 +79,45 @@ namespace servercalculadora.Controllers
 			{
 				multip.Product = multip.Product * num;
 			}
-			currentUser.Operations.Add(new MultOperation(factores, multip));
+			if (Request.Headers["X-Evi-Tracking-Id"].Any())
+			{
+				var identification = Request.Headers["X-Evi-Tracking-Id"];
+				User currentUser = UsersHandler.KnownOrNot(identification);
+				currentUser.Operations.Add(new MultOperation(factores, multip));
+			}
 			return multip;
 		}
 		[HttpPost]
 		[Route("div")]
 		public DivResponse Postdiv([FromBody] DivRequest numeros)
 		{
-			var identification = Request.Headers[key: "X-Evi-Tracking-Id"];
-			User currentUser = UsersHandler.KnownOrNot(identification);
 			DivResponse div = new DivResponse
 			{
 				Quotient = numeros.Dividend / numeros.Divisor,
 				Remainder = numeros.Dividend % numeros.Divisor
 			};
-			currentUser.Operations.Add(new DivisionOperation(numeros, div));
+			if (Request.Headers["X-Evi-Tracking-Id"].Any())
+			{
+				var identification = Request.Headers["X-Evi-Tracking-Id"];
+				User currentUser = UsersHandler.KnownOrNot(identification);
+				currentUser.Operations.Add(new DivisionOperation(numeros, div));
+			}
 			return div;
 		}
 		[HttpPost]
 		[Route("sqrt")]
 		public SqrtResponse Postsqrt([FromBody] SqrtRequest entry)
 		{
-			var identification = Request.Headers[key: "X-Evi-Tracking-Id"];
-			User currentUser = UsersHandler.KnownOrNot(identification);
 			SqrtResponse raiz = new SqrtResponse
 			{
 				Square = Math.Sqrt(entry.Number)
 			};
-			currentUser.Operations.Add(new SqrtOperation(entry, raiz));
+			if (Request.Headers["X-Evi-Tracking-Id"].Any())
+			{
+				var identification = Request.Headers["X-Evi-Tracking-Id"];
+				User currentUser = UsersHandler.KnownOrNot(identification);
+				currentUser.Operations.Add(new SqrtOperation(entry, raiz));
+			}
 			return raiz;
 		}
 	}
