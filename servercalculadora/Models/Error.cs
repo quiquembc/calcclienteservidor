@@ -8,7 +8,7 @@ namespace servercalculadora.Models
 	public class Error
 	{
 		public String ErrorCode { get; set; }
-		public String ErrorStatus { get; set; }
+		public int ErrorStatus { get; set; }
 		public String ErrorMessage { get; set; }
 	}
 }

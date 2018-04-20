@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using servercalculadora.Models;
 using servercalculadora;
+
 namespace servercalculadora.Controllers
 {
 	[Produces("application/json")]
@@ -13,28 +15,30 @@ namespace servercalculadora.Controllers
 	public class CalculatorController : Controller
 	{
 		public static UsersBook MyBook { get; set; }
+
 		[HttpGet]
 		[Route("Index")]
 		public String Index()
 		{
 			return "Calculator server is listening...";
 		}
+
 		[HttpPost]
 		[Route("Journal")]
 		public JournalResponse ReturnJournal([FromBody] JournalRequest RequestedUser)
 		{
-			User currentUser = UsersHandler.KnownOrNot(RequestedUser.Id);
+			var currentUser = UsersHandler.KnownOrNot(RequestedUser.Id);
 			var Journal = new JournalResponse
 			{
 				Operations = currentUser.Operations
 			};
 			return Journal;
 		}
+
 		[HttpPost]
 		[Route("add")]
 		public SumResponse Postadd([FromBody] SumRequest sumandos)
 		{
-			
 			SumResponse sum = new SumResponse
 			{
 				Sum = 0
@@ -46,11 +50,12 @@ namespace servercalculadora.Controllers
 			if (Request.Headers["X-Evi-Tracking-Id"].Any())
 			{
 				var identification = Request.Headers["X-Evi-Tracking-Id"];
-				User currentUser = UsersHandler.KnownOrNot(identification);
+				var currentUser = UsersHandler.KnownOrNot(identification);
 				currentUser.Operations.Add(new AddOperation(sumandos, sum));
 			}
 			return sum;
 		}
+
 		[HttpPost]
 		[Route("sub")]
 		public SubResponse Postsub([FromBody] SubRequest restandos)
@@ -62,11 +67,12 @@ namespace servercalculadora.Controllers
 			if (Request.Headers["X-Evi-Tracking-Id"].Any())
 			{
 				var identification = Request.Headers["X-Evi-Tracking-Id"];
-				User currentUser = UsersHandler.KnownOrNot(identification);
+				var currentUser = UsersHandler.KnownOrNot(identification);
 				currentUser.Operations.Add(new SubtractOperation(restandos, resta));
 			}
 			return resta;
 		}
+
 		[HttpPost]
 		[Route("mult")]
 		public MultResponse Postmult([FromBody] MultRequest factores)
@@ -82,28 +88,49 @@ namespace servercalculadora.Controllers
 			if (Request.Headers["X-Evi-Tracking-Id"].Any())
 			{
 				var identification = Request.Headers["X-Evi-Tracking-Id"];
-				User currentUser = UsersHandler.KnownOrNot(identification);
+				var currentUser = UsersHandler.KnownOrNot(identification);
 				currentUser.Operations.Add(new MultOperation(factores, multip));
 			}
 			return multip;
 		}
+
 		[HttpPost]
 		[Route("div")]
-		public DivResponse Postdiv([FromBody] DivRequest numeros)
+		public IActionResult Postdiv([FromBody] DivRequest numeros)
 		{
-			DivResponse div = new DivResponse
+			int dividend;
+			int divisor;
+			try
 			{
-				Quotient = numeros.Dividend / numeros.Divisor,
-				Remainder = numeros.Dividend % numeros.Divisor
-			};
+				dividend = numeros.Dividend;
+				divisor = numeros.Divisor;
+			}
+			catch (Exception e)
+			{
+				return StatusCode(400, e);
+			}
+			DivResponse div;
+			try
+			{
+				div = new DivResponse
+				{
+					Quotient = dividend / divisor,
+					Remainder = dividend % divisor
+				};
+			}
+			catch (Exception e)
+			{
+				return StatusCode(400, e);
+			}
 			if (Request.Headers["X-Evi-Tracking-Id"].Any())
 			{
 				var identification = Request.Headers["X-Evi-Tracking-Id"];
-				User currentUser = UsersHandler.KnownOrNot(identification);
+				var currentUser = UsersHandler.KnownOrNot(identification);
 				currentUser.Operations.Add(new DivisionOperation(numeros, div));
 			}
-			return div;
+			return new JsonResult(div);
 		}
+
 		[HttpPost]
 		[Route("sqrt")]
 		public SqrtResponse Postsqrt([FromBody] SqrtRequest entry)
@@ -115,36 +142,37 @@ namespace servercalculadora.Controllers
 			if (Request.Headers["X-Evi-Tracking-Id"].Any())
 			{
 				var identification = Request.Headers["X-Evi-Tracking-Id"];
-				User currentUser = UsersHandler.KnownOrNot(identification);
+				var currentUser = UsersHandler.KnownOrNot(identification);
 				currentUser.Operations.Add(new SqrtOperation(entry, raiz));
 			}
 			return raiz;
 		}
 	}
+
 	public class UsersHandler
 	{
 		public static User KnownOrNot(string identification)
 		{
-			if (CalculatorController.MyBook==null)
+			if (CalculatorController.MyBook == null)
 			{
 				CalculatorController.MyBook = new UsersBook();
-				User currentUser = new User(identification);
+				var currentUser = new User(identification);
 				CalculatorController.MyBook.Users.Add(currentUser);
 				return currentUser;
 			}
 			else
 			{
-				if (CalculatorController.MyBook.Users.Where(user => user.Login==identification).Count()==1)
+				if (CalculatorController.MyBook.Users.Where(user => user.Login == identification).Count() == 1)
 				{
 					return CalculatorController.MyBook.Users.Find(user => user.Login == identification);
 				}
 				else
 				{
-					User currentUser = new User(identification);
+					var currentUser = new User(identification);
 					CalculatorController.MyBook.Users.Add(currentUser);
 					return currentUser;
 				}
 			}
-		}		
+		}
 	}
 }

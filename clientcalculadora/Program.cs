@@ -111,16 +111,21 @@ namespace clientcalculadora
 		}
 		public static int ParseStringToInteger(string readFromKeyboard)
 		{
-			try
+			int aux;
+			bool control = true;
+			do
 			{
-				return Int32.Parse(readFromKeyboard);				
-			}
-			catch (Exception)
-			{
-				Console.WriteLine($"Only numbers allowed, letters and blanks spaces would return -1");
-				return -1;
-			}
-			
+				if (Int32.TryParse(readFromKeyboard, out aux))
+				{
+					control = false;
+				}
+				else
+				{
+					Console.WriteLine("Please write a number");
+					readFromKeyboard = Console.ReadLine();
+				}
+			} while (control);
+			return aux;
 		}
 		public static string XEviTrackingId;
 		static void Main(string[] args)
